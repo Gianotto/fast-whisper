@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Optional
 
 import whisper
-from fastapi import Depends, FastAPI, HTTPException, Request, Security, UploadFile, status
+from fastapi import Depends, FastAPI, HTTPException, Security, UploadFile, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 WHISPER_TOKEN: str = os.environ["WHISPER_TOKEN"]
