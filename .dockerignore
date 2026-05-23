@@ -3,6 +3,13 @@ docs/
 conftest.py
 *.md
 __pycache__/
-*.pyc
+*.py[cod]
 .git/
+.gitignore
 .env
+.env.example
+.claude/
+.pytest_cache/
+docker-compose.yml
+.dockerignore
+ROADMAP.md
