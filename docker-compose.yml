@@ -1,0 +1,21 @@
+services:
+  whisper-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        WHISPER_MODEL: ${WHISPER_MODEL:-base}
+    image: whisper-service:latest
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+    environment:
+      WHISPER_TOKEN: ${WHISPER_TOKEN}
+      WHISPER_MODEL: ${WHISPER_MODEL:-base}
+      WHISPER_LANGUAGE: ${WHISPER_LANGUAGE:-pt}
+    networks:
+      - aurora_net
+
+networks:
+  aurora_net:
+    external: true
