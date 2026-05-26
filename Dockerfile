@@ -8,6 +8,7 @@ WORKDIR /app
 
 COPY whisper_service/requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip setuptools && \
+    pip install --no-cache-dir --no-build-isolation openai-whisper==20231117 && \
     pip install --no-cache-dir -r requirements.txt
 
 ARG WHISPER_MODEL=base
