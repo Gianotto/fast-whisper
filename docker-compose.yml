@@ -6,6 +6,7 @@ services:
       args:
         WHISPER_MODEL: ${WHISPER_MODEL:-base}
     image: whisper-service:latest
+    pull_policy: never
     restart: unless-stopped
     ports:
       - "8001:8001"
