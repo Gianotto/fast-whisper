@@ -6,23 +6,27 @@ from pathlib import Path
 from typing import Optional
 
 import whisper
-from fastapi import Depends, FastAPI, HTTPException, Security, UploadFile, status
+from fastapi import Depends, FastAPI, HTTPException, Query, Security, UploadFile, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 WHISPER_TOKEN: str = os.environ["WHISPER_TOKEN"]
 WHISPER_MODEL: str = os.getenv("WHISPER_MODEL", "base")
 WHISPER_LANGUAGE: str = os.getenv("WHISPER_LANGUAGE", "pt")
 
-_model: whisper.Whisper | None = None
+_models: dict[str, whisper.Whisper] = {}
 _bearer = HTTPBearer(auto_error=False)
+
+
+def get_model(name: str) -> whisper.Whisper:
+    if name not in _models:
+        _models[name] = whisper.load_model(name)
+    return _models[name]
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    global _model
-    _model = whisper.load_model(WHISPER_MODEL)
+    get_model(WHISPER_MODEL)
     yield
-    _model = None
 
 
 app = FastAPI(title="whisper-service", lifespan=lifespan)
@@ -39,12 +43,14 @@ def verify_token(
 async def transcribe(
     audio: UploadFile,
     _: None = Depends(verify_token),
+    model: Optional[str] = Query(default=None),
 ):
+    model_name = model or WHISPER_MODEL
     suffix = Path(audio.filename or "audio.ogg").suffix or ".ogg"
     tmp_path = Path(tempfile.gettempdir()) / f"{uuid.uuid4()}{suffix}"
     try:
         tmp_path.write_bytes(await audio.read())
-        result = _model.transcribe(str(tmp_path), language=WHISPER_LANGUAGE)
+        result = get_model(model_name).transcribe(str(tmp_path), language=WHISPER_LANGUAGE)
     finally:
         tmp_path.unlink(missing_ok=True)
 
@@ -54,4 +60,5 @@ async def transcribe(
         "duration_seconds": round(
             sum(s["end"] - s["start"] for s in result.get("segments", [])), 2
         ),
+        "model": model_name,
     }
