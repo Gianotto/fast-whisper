@@ -117,7 +117,7 @@ Os testes usam o modelo `tiny` (configurado no topo do arquivo de testes) para m
 | Variável | Obrigatória | Padrão | Descrição |
 |----------|:-----------:|--------|-----------|
 | `WHISPER_TOKEN` | Sim | — | Bearer token exigido no header `Authorization` |
-| `WHISPER_MODEL` | Não | `base` | Modelo Whisper: `tiny`, `base`, `small`, `medium`, `large` |
+| `WHISPER_MODEL` | Não | `base` | Modelo Whisper (ver tabela abaixo) |
 | `WHISPER_LANGUAGE` | Não | `pt` | Código de idioma ISO 639-1 passado ao Whisper |
 
 ---
@@ -179,15 +179,22 @@ Resumo do nó HTTP Request no n8n:
 
 ---
 
-## Performance (CPU)
+## Modelos disponíveis (`WHISPER_MODEL`)
 
-| Modelo | Tamanho | RAM | Latência por min de áudio |
-|--------|---------|-----|--------------------------|
-| `tiny` | 75 MB | ~125 MB | ~2–4s |
-| `base` | 145 MB | ~210 MB | ~5–10s |
-| `small` | 466 MB | ~600 MB | ~15–30s |
-| `medium` | 1.5 GB | ~2 GB | ~60s/min |
+| Modelo | Parâmetros | VRAM | Velocidade | Recomendado para |
+|--------|-----------|------|------------|-----------------|
+| `tiny` | 39 M | ~1 GB | ~32x | Testes, prototipagem |
+| `base` | 74 M | ~1 GB | ~16x | Uso geral em CPU (padrão) |
+| `small` | 244 M | ~2 GB | ~6x | Melhor qualidade em CPU |
+| `medium` | 769 M | ~5 GB | ~2x | GPU com VRAM moderada |
+| `large-v1` | 1550 M | ~10 GB | 1x | GPU, máxima qualidade (v1) |
+| `large-v2` | 1550 M | ~10 GB | 1x | GPU, máxima qualidade (v2) |
+| `large-v3` | 1550 M | ~10 GB | 1x | GPU, melhor qualidade atual |
+| `large` | 1550 M | ~10 GB | 1x | Alias de `large-v3` |
+| `turbo` | 809 M | ~6 GB | ~8x | GPU, melhor custo-benefício |
 
-Para `base` em português, a qualidade é adequada para mensagens de voz do Telegram (frases curtas, vocabulário cotidiano).
+> Modelos com sufixo `.en` (ex: `tiny.en`, `base.en`) são otimizados apenas para inglês — não usar com português.
 
-Para uso com GPU, altere a imagem base no `Dockerfile` para uma com suporte CUDA e ajuste `WHISPER_MODEL` para `medium` ou `large`.
+Para `base` em CPU, a qualidade é adequada para mensagens de voz do Telegram (frases curtas, vocabulário cotidiano). Para maior precisão em CPU, use `small`.
+
+Para uso com GPU, altere a imagem base no `Dockerfile` para uma com suporte CUDA e ajuste `WHISPER_MODEL` para `turbo` ou `large-v3`.
