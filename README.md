@@ -24,7 +24,8 @@ git clone https://github.com/Gianotto/fast-whisper.git
 cd fast-whisper
 
 cp .env.example .env
-# Edite .env e defina WHISPER_TOKEN com um valor seguro
+# Gere um token seguro e cole no .env:
+#   openssl rand -hex 32
 ```
 
 Se o seu ambiente já tem uma rede Docker externa chamada `aurora_net`:
