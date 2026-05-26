@@ -15,8 +15,8 @@ services:
       WHISPER_MODEL: ${WHISPER_MODEL:-base}
       WHISPER_LANGUAGE: ${WHISPER_LANGUAGE:-pt}
     networks:
-      - aurora_net
+      - stack_default
 
 networks:
-  aurora_net:
-    external: false
+  stack_default:
+    external: true
