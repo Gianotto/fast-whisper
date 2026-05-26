@@ -15,8 +15,8 @@ services:
       WHISPER_MODEL: ${WHISPER_MODEL:-base}
       WHISPER_LANGUAGE: ${WHISPER_LANGUAGE:-pt}
     networks:
-      - stack_default
+      - stack_stack
 
 networks:
-  stack_default:
+  stack_stack:
     external: true
