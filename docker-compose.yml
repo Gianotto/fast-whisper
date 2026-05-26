@@ -19,4 +19,4 @@ services:
 
 networks:
   aurora_net:
-    external: true
+    external: false
